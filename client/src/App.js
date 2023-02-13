@@ -1,5 +1,6 @@
 import GoalHeader from './components/GoalHeader';
 import GoalItem from './components/GoalItem'
+import Auth from './components/Auth';
 import { useEffect, useState } from 'react'
 
 
@@ -8,9 +9,11 @@ const App = () => {
   const userEmail = 'pat@test.com'
   const [ goals, setGoals ] = useState(null)
 
+  const authToken = false
+
   const getData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/goals/${userEmail}`)
+      const response = await fetch(`${process.env.REACT_APP_SERVERURL}/goals/${userEmail}`)
       const json = await response.json()
       setGoals(json)
     } catch (err){
@@ -18,7 +21,10 @@ const App = () => {
     }
   }
 
-  useEffect(() => getData, [])
+  useEffect(() => {
+    if (authToken){
+      getData()
+    }}, [])
 
   console.log(goals)
 
@@ -27,8 +33,12 @@ const App = () => {
 
   return (
     <div className='app'> 
-      <GoalHeader goalName={'2023 Goals'} />
-      {sortedGoals?.map((goal) => <GoalItem key={goal.id} goal={goal}/>)}
+    {!authToken && <Auth />}
+    {authToken &&
+     <>
+        <GoalHeader goalName={'2023 Goals'} getData={getData}/>
+        {sortedGoals?.map((goal) => <GoalItem key={goal.id} goal={goal} getData={getData}/>)} 
+      </>}
       
     </div>
   );

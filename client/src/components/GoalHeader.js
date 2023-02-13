@@ -1,7 +1,7 @@
 import Modal from './Modal';
 import {useState} from 'react'
 
-const GoalHeader = ({ goalName }) => {
+const GoalHeader = ({ goalName, getData }) => {
 
   const [showModal, setShowModal] = useState(false)
 
@@ -20,7 +20,7 @@ const GoalHeader = ({ goalName }) => {
           <button className='create' onClick={() => setShowModal(true)}>ADD NEW</button>
           <button className='signout' onClick={signOut}>SIGN OUT</button>
         </div>
-        {showModal && <Modal mode={'create'} setShowModal={setShowModal}/>}
+        {showModal && <Modal mode={'create'} setShowModal={setShowModal} getData={getData}/>}
       </div>
     );
   }

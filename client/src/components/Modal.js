@@ -1,13 +1,53 @@
 import {useState} from 'react'
 
-const Modal = ({mode, setShowModal}) => {
+const Modal = ({mode, setShowModal, getData, goal}) => {
   const editMode = mode == 'edit' ? true : false 
+  
   const [data, setData] = useState({
-    user_email : '',
-    title : '',
-    progress : '',
-    date: editMode ? '' : new Date()
+    user_email : editMode ? goal.user_email : 'pat@test.com',
+    title : editMode ? goal.title : null,
+    progress : editMode ? goal.progress : 50,
+    date: editMode ? goal.date : new Date()
   })
+  
+  const postData = async(e) => {
+    e.preventDefault()
+    try{
+      const response =  await fetch(`${process.env.REACT_APP_SERVERURL}/goals/`, {
+        method: 'POST',
+        headers: {'Content-Type' : 'application/json'},
+        body : JSON.stringify(data)
+      })
+      if(response.status == 200){
+        console.log('yes')
+        console.log(response)
+        setShowModal(false)
+        getData()
+      }
+      
+    } catch(err){
+      console.log(err)
+    }
+  }
+
+  const editData = async (e) =>{
+    e.preventDefault()
+    try{
+      const response = await fetch (`${process.env.REACT_APP_SERVERURL}/goals/${goal.id}`,{
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body :  JSON.stringify(data)
+      })
+      if(response.status === 200){
+        setShowModal(false)
+        getData()
+      }
+    } catch(err){
+      console.log(err)
+    }
+  }
+
+
 
   const handleChange = (e) =>{
     console.log('handle change',e)
@@ -49,7 +89,7 @@ const Modal = ({mode, setShowModal}) => {
               value={data.progress}
               onChange={handleChange}
             />
-            <input className={mode} type='submit' />
+            <input className={mode} type='submit' onClick={editMode ? editData : postData}/>
           </form>
         </div>
         
