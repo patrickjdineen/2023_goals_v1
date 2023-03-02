@@ -1,11 +1,11 @@
 const PORT = process.env.PORT ?? 8000
-const express = require('express')
-const { v4: uuidv4 } = require('uuid')
-const app = express()
-const pool = require('./db')
-const cors = require('cors')
-const bCrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const express = require('express');
+const { v4: uuidv4 } = require('uuid');
+const app = express();
+const pool = require('./db');
+const cors = require('cors');
+const bCrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 app.use(cors())
 app.use(express.json())
@@ -75,15 +75,25 @@ app.post('/signup', async (req, res) => {
         const token = jwt.sign({email}, 'secret', {expiresIn: '1hr'})
 
         res.json({email, token})
+
     }catch(err){
-        console.log(err)}
+        console.log(err)
+        if (err){
+            res.json( {detail: err.detail} )
+        }
+    }
 })
 
 //login
 app.post('/login', async (req, res) => {
     const { email, password } = req.body
     try{
+        const logIn = await pool.query(`SELECT * FROM  users WHERE (email, hashed_password) VALUES ($1,$2);`,
+        [email, hashPass])
 
+        const token = jwt.sign({email}, 'secret', {expiresIn: '1hr'})
+
+        res.json({email, token})
     }catch(err){
         console.log(err)}
 })

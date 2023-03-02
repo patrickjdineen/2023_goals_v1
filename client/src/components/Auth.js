@@ -1,5 +1,6 @@
 import {useState} from 'react'
 
+
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true)
   const [error, setError] = useState(null)
@@ -29,6 +30,16 @@ const Auth = () => {
 
     const data = await response.json()
     console.log(data)
+
+    if(data.detail){
+      setError(data.detail)
+    }else{
+      /*
+      setCookie('Email', data.email)
+      setCookie('AuthTioken', data.token)
+      */
+    }
+
   }
   
   return (
